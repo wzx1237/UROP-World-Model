@@ -83,6 +83,6 @@ Specifically, we construct a joint angle–conditioned 3D Gaussian model of the 
 3. a **feature loss** aligning DINOv2 embeddings between rendered and observed frames
 
 ## 改进方向：
-1. 在进行摄像机机位和**3-D重建**时，我们可以采用不同的loss. 例如在Phys Twin中提到的：$L_{total} = l_{\text{geometry}} + l_{\text{motion}} + l_{\text{render}}$. 或者提出一种新的loss: $L_{total} = L_{\text{geometry}} + L_{\text{flow}} + L_{\text{color}}$ for Automated Robot-Camera Calibration and $L_{total} = L_{\text{geometry}} + L_{\text{motion}}$ for 3D mesh reconstruction. 然后使用Phys Twin中提到的分阶段拟合的方式来training.
+1. 在进行摄像机机位和**3-D重建**时，我们可以采用不同的loss. 例如在Phys Twin中提到的: $L_{total} = l_{\text{geometry}} + l_{\text{motion}} + l_{\text{render}}$. 或者提出一种新的loss: $L_{total} = L_{\text{geometry}} + L_{\text{flow}} + L_{\text{color}}$ for Automated Robot-Camera Calibration and $L_{total} = L_{\text{geometry}} + L_{\text{motion}}$ for 3D mesh reconstruction. 然后使用Phys Twin中提到的分阶段拟合的方式来training.
 2. 物体重建的精度与一致性: 当前使用 Hunyuan-3D 等图像到网格生成模型，但这些模型通常在规范坐标系下生成，需额外姿态估计。
 3. 物理属性估计的可靠性: 当前通过 Gemini 推理质量、材质等物理属性，但缺乏真实物理测量支持。
