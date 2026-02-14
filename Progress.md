@@ -27,8 +27,62 @@ We then present our two-stage:
 This *cost function* is decomposed into three components: $C = C_{\text{geometry}} + C_{\text{motion}} + C_{\text{render}}$
 
 ## Chanllenge and Solution:
-1. partial observations from sparse viewpoints (Generative Shape Prior)
-2. joint optimization of both the discrete topology and physical parameters (Sparse-to-Dense Optimization.)
-3. discontinuities in the dynamic model, along with the long time horizon and dense parameter space, which make continuous optimization difficult.
+1. partial observations from sparse viewpoints (Generative Shape Prior, 利用 生成式形状先验（Trellis），结合超分辨率和注册模块（PnP、非刚性配准、射线投射对齐），得到初始完整几何。)
+2. joint optimization of both the discrete topology and physical parameters (Sparse-to-Dense Optimization. 第一阶段：零阶采样优化，假设均匀弹性，得到初始解。第二阶段：基于自研的 可微分 spring-mass 模拟器，用梯度下降细化稠密弹性和碰撞参数。)
+3. discontinuities in the dynamic model, along with the long time horizon and dense parameter space, which make continuous optimization difficult.(采用 Gaussian splats + 线性混合蒙皮 (LBS)，让高斯核随邻近质量点运动而动态更新。)
 
 ## 改进方向：
+将 PhysTwin 扩展到多物体交互与复杂环境。
+
+# Vid2Sim: Generalizable, Video-based Reconstruction of Appearance, Geometry and Physics for Mesh-free Simulation
+
+## Overview:
+Vid2Sim first **reconstructs the observed configuration** of the physical system from video using a feed-forward neural network trained to capture physical world knowledge.  A lightweight optimization pipeline **then refines the estimated appearance, geometry, and physical properties** to closely align with video observations within just a few minutes.
+
+## Method:
+We **focus on elastic material** modeled by the Neo-Hookean constitutive model to reduce the state space that our feed-forward predictor needs to learn, where **we only predict Young’s modulus $E$, Poisson’s ratio $ν$ and estimated scalar LBS weight**.
+0. Mesh-Free,Reduced-Order Simulation: 使用点集去表示物体，物体被表示为一组离散点（而不是网格或体素）。每个点在静止状态下有一个初始位置，模拟时通过控制点（handles）来驱动这些点的运动。通过一个势能方程去更新这些点的位置，when evolving $z_{t}$ at each time step, we usually **sample a small set of key control points**, which is also called cubature points, to save the computational time and memory.
+1. Feed-forward Physical System Identification: 用 VideoMAE 提取视频物理特征 → MLP 回归物理参数($E$ and $v$),HyperNetwork 预测 LBS 权重 → LGM 恢复几何与外观 → 得到可模拟的初始结果。
+2. Scene-specific Refinement: In our method, we **accelerate the refinement by introducing a Neural Jacobian module**.Then, we optimize the physical parameters, with fine-tuning the LBS and the corresponding Neural Jacibian at the same time, to **match the input videos**. 
+
+## 改进方向：
+扩展 Vid2Sim 到多物理场景与跨模态输入。当前工作主要针对 弹性材料，未来可扩展到 流体、颗粒物、塑性材料 等更复杂的物理现象。可以结合 触觉/力传感器数据 或 单视角视频，实现跨模态的物理属性估计。
+
+# ROBOTARENA $\infty$ : SCALABLE ROBOT BENCHMARKING VIA REAL-TO-SIM TRANSLATION
+## Overview:
+**Real-world evaluation is inherently unscalable.** Human operators must supervise trials and manually reset scenes, which restricts the scale and frequency of evaluations.
+
+We introduce RobotArena $\infty$, **a new benchmarking framework that scales robot evaluation** by deploying policies in automatically constructed simulated environments and assessing them through automatic VLM score and online human preference feedback:
+1. We present a **scalable and extensible benchmarking protocol for robotics**, by coupling physics engines, real-to-sim translation and human preference feedback.
+2. We introduce a **fully automated reality-to-simulation translation pipeline built upon VLMs**, 2D-to-3D generative models and differentiable rendering.
+3. We evaluate **VLAs from labs worldwide across hundreds of environments with thousands of human preferences**, the most extensive robot evaluation to date.
+4. We present **key evaluation results** that reveal how current robot policies generalize—or fail to—under distribution shifts.
+
+## 流程
+- MAPPING DEMONSTRATION VIDEOS TO SIMULATION：
+Our method extracts **five key elements from the demonstration video**:
+1. the camera’s **6-DoF pose** relative to the robot body frame (摄影机机位)
+2. **3D mesh reconstructions** of task-relevant objects, their orientations, sizes, and material properties:
+3. a scene depth map (景深)
+4. a clean background image (背景)
+5. proportional–derivative control gains.
+
+- EVALUATING ROBOT TASK PROGRESS SCORES WITH VLMS:
+Our goal is to **automate success detection and task progress evaluations**. We thus choose to assess task progress **using prompting techniques for vision-language models (VLMs).**
+
+Specifically, a VLM is prompted with a **shuffled sequence** （为了防止model通过时间顺序来判断progress） of video frames, augmented with the initial frame as a zero-progress reference, and **asked to assign progress scores**
+
+## 技术细节（如何实现3D mesh reconstruction, Automated Robot-Camera Calibration）：
+To recover each object’s correct 3D pose, we **render 2D image views of the reconstructed 3D mesh and compare them against the 2D object crop**. The view with the most feature matches is selected, and these correspondences are lifted to 3D **using monocular depth estimate** for the real image and simulated depth for the rendered view
+
+**Physical and material properties for the objects are inferred by prompting Gemini** and are then incorporated into the simulation to ensure realistic interactions.
+
+Specifically, we construct a joint angle–conditioned 3D Gaussian model of the robot via differentiable rendering in simulation based on its URDF file. Given a robot demonstration video annotated with per-frame joint angles, we **render the Gaussian robot model and optimize the camera’s 3D translation and orientation to minimize a composite alignment loss with three terms**: 
+1. an **RGB loss** penalizing pixel-level appearance differences
+2. a **flow loss** enforcing **consistency** between rendered motion fields and optical flow from the video 
+3. a **feature loss** aligning DINOv2 embeddings between rendered and observed frames
+
+## 改进方向：
+1. 在进行摄像机机位和**3-D重建**时，我们可以采用不同的loss. 例如在Phys Twin中提到的：$L_{total} = l_{\text{geometry}} + l_{\text{motion}} + l_{\text{render}}$. 或者提出一种新的loss: $L_{total} = L_{\text{geometry}} + L_{\text{flow}} + L_{\text{color}}$ for Automated Robot-Camera Calibration and $L_{total} = L_{\text{geometry}} + L_{\text{motion}}$ for 3D mesh reconstruction. 然后使用Phys Twin中提到的分阶段拟合的方式来training.
+2. 物体重建的精度与一致性: 当前使用 Hunyuan-3D 等图像到网格生成模型，但这些模型通常在规范坐标系下生成，需额外姿态估计。
+3. 物理属性估计的可靠性: 当前通过 Gemini 推理质量、材质等物理属性，但缺乏真实物理测量支持。
