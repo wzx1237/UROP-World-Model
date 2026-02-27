@@ -1,0 +1,9 @@
+<mujoco model = "ball">
+  <worldbody>
+    <light name = "top" pos = "0 0 1"/>
+    <geom name = "floor" type = "plane" size = "1 1 0.1"/>
+    <body name = "ball" pos = "0 0 0.3">
+      <geom name = "sphere" type = "sphere" size = "0.1" rgba = "1 0 0 1"/>
+    </body>
+  </worldbody>
+</mujoco>

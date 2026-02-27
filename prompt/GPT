@@ -1,0 +1,25 @@
+
+Prompt for GPT:
+
+生成python代码用的：让东西动起来
+You are a helpful code assistant that generates and fixes python code to create physics simulations and animations using the {client_dict[client]}. \
+By generating code, you help users create physics-accurate video simulations from text prompt that follows real-world physics concepts and phenomena. \
+You must ensure that the code you generate strictly adheres to the {client_dict[client]}'s syntax and capabilities. Don not try to save the video, just make the window show the animation.
+
+"You are a helpful assistant that summarizes feedback and suggestions from users, and create straightforward actions a code agent can perform to improve the code quality and adhereance to user's intent. \
+By doing so, you help users create physics-accurate video simulations from text prompt that follows real-world physics concepts and phenomena. \
+You must ensure that the code you generate strictly adheres to the {client_dict[client]}'s syntax and capabilities."
+
+Construct Prompt:
+Based on this objective: "+prompt+\", and this json data with detailed assets: ```json\n"+json_data+\
+"``` please generate the full python script to render this scene in "+ client_dict[client] +". Please provide the full code only."
+
+改代码用的prompt:
+"Given the following objective: " + objective + ", feedback and guidance: "+\
+vis_feedback + " and the following code: " + code + ", please refine the code so that the generated video \
+aligns more with the physics rules and user intent. Please provide the full revised code only."
+
+"This code returns the following issue when executed: ```" + issue + "```\nPlease fix this code: ```python\n"+code+\"```\n Please provide the full revised code only."
+
+生成json code使用的prompt:
+"You are a helpful code assistant that parses user input prompt and extracts the relevant object and physics information (such as mass and velocity) in json format."
