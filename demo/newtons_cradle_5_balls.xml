@@ -1,0 +1,98 @@
+<mujoco model="newtons_cradle_5_balls">
+  <!-- Scene: five shiny metal balls, each suspended by a single visible vertical string segment.
+       Camera faces all five balls. Leftmost ball is pulled to 30 degrees and released (initial angular displacement).
+  -->
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+  <size njmax="2000" nconmax="500"/>
+
+  <asset>
+    <!-- Shiny metal appearance -->
+    <material name="metal_shiny" rgba="0.75 0.78 0.82 1" specular="0.9" shininess="0.8"/>
+    <material name="string_mat"  rgba="0.15 0.15 0.15 1" specular="0.1" shininess="0.1"/>
+  </asset>
+
+  <worldbody>
+    <!-- ground -->
+    <geom name="floor" type="plane" size="2 2 0.1" rgba="0.8 0.8 0.8 1"/>
+
+    <!-- Camera faces the balls -->
+    <camera name="cam_front" pos="0 -1.2 0.35" xyaxes="1 0 0 0 0 1" fovy="45"/>
+
+    <!-- Anchor line (top not visible): we still need anchor points to suspend strings -->
+    <!-- Balls are aligned along X, equally spaced -->
+    <!-- Parameters -->
+    <!-- String length = 0.25 m, ball radius = 0.03 m, spacing ~ 2R + small gap -->
+    <body name="cradle_root" pos="0 0 0.45">
+      <!-- optional invisible reference -->
+      <geom name="root_ref" type="sphere" size="0.001" rgba="0 0 0 0" contype="0" conaffinity="0"/>
+
+      <!-- Leftmost ball: initial angle 30 degrees in +Y direction (pulled towards camera) -->
+      <!-- Achieved by placing ball at rotated position, with a ball joint that will let it swing. -->
+      <body name="ball1_anchor" pos="-0.14 0 0">
+        <!-- visible vertical string segment -->
+        <geom name="string1" type="capsule"
+              fromto="0 0 0  -0.125 0 -0.216506"
+              size="0.002"
+              material="string_mat"
+              contype="0" conaffinity="0"/>
+        <!-- pendulum body (ball) -->
+        <!-- Initial displacement: 30 deg, length 0.25 => y = L*sin(30)=0.125, z = -L*cos(30)=-0.2165 -->
+        <body name="ball1" pos="-0.125 0 -0.216506">
+          <joint name="ball1_joint" type="ball" pos="0 0 0" damping="0.001"/>
+          <geom name="ball1_geom" type="sphere" size="0.03" material="metal_shiny"
+                density="7800" friction="0.2 0.005 0.0001" solref="0.002 1" solimp="0.9 0.95 0.001"/>
+          <!-- Released: initial velocity = 0 -->
+        </body>
+      </body>
+
+      <!-- Middle balls: hanging straight down -->
+      <body name="ball2_anchor" pos="-0.07 0 0">
+        <geom name="string2" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <body name="ball2" pos="0 0 -0.25">
+          <joint name="ball2_joint" type="ball" damping="0.001"/>
+          <geom name="ball2_geom" type="sphere" size="0.03" material="metal_shiny"
+                density="7800" friction="0.2 0.005 0.0001" solref="0.002 1" solimp="0.9 0.95 0.001"/>
+        </body>
+      </body>
+
+      <body name="ball3_anchor" pos="0 0 0">
+        <geom name="string3" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <body name="ball3" pos="0 0 -0.25">
+          <joint name="ball3_joint" type="ball" damping="0.001"/>
+          <geom name="ball3_geom" type="sphere" size="0.03" material="metal_shiny"
+                density="7800" friction="0.2 0.005 0.0001" solref="0.002 1" solimp="0.9 0.95 0.001"/>
+        </body>
+      </body>
+
+      <body name="ball4_anchor" pos="0.07 0 0">
+        <geom name="string4" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <body name="ball4" pos="0 0 -0.25">
+          <joint name="ball4_joint" type="ball" damping="0.001"/>
+          <geom name="ball4_geom" type="sphere" size="0.03" material="metal_shiny"
+                density="7800" friction="0.2 0.005 0.0001" solref="0.002 1" solimp="0.9 0.95 0.001"/>
+        </body>
+      </body>
+
+      <body name="ball5_anchor" pos="0.14 0 0">
+        <geom name="string5" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <body name="ball5" pos="0 0 -0.25">
+          <joint name="ball5_joint" type="ball" damping="0.001"/>
+          <geom name="ball5_geom" type="sphere" size="0.03" material="metal_shiny"
+                density="7800" friction="0.2 0.005 0.0001" solref="0.002 1" solimp="0.9 0.95 0.001"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- Notes:
+       - Mass is implied via density (steel-like 7800 kg/m^3) and sphere radius 0.03 m.
+       - Initial velocity is 0; initial configuration has ball1 displaced by 30 degrees and "released".
+       - Strings are visual only (capsules with no collision). Constraint is via ball joint at the anchor.
+       - If you want the string to be a physical constraint of exact length, we can add a tendon/constraint or use a hinge with a fixed offset frame.
+  -->
+</mujoco>

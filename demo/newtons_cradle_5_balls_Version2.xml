@@ -1,0 +1,89 @@
+<!--Debug note:
+      1. The original version do not have "hinge", so it is impossible to "rotate" 
+      2. I have fixed the problem that the direction of that angle. But copilot insisted on the wrong way.
+         Even after I fixed the problem and open a new chat...
+      3. The ball does not close to each other. There are a small gap between them
+         (this small gap is designed by copilot)
+      -->
+
+<mujoco model="newtons_cradle_5_balls">
+  <!-- Scene: five shiny metal balls, each suspended by a single visible vertical string segment.
+       Camera faces all five balls. Leftmost ball is pulled to 30 degrees and released (initial angular displacement).
+  -->
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="RK4"/>
+  <size njmax="2000" nconmax="500"/>
+
+  <asset>
+    <!-- Shiny metal appearance -->
+    <material name="metal_shiny" rgba="0.75 0.78 0.82 1" specular="0.9" shininess="0.8"/>
+    <material name="string_mat"  rgba="0.15 0.15 0.15 1" specular="0.1" shininess="0.1"/>
+  </asset>
+  
+  <default>
+      <geom solref="0.001 1" solimp="0.98 0.99 0.001"/>
+  </default>
+
+  <worldbody>
+    <!-- ground -->
+    <geom name="floor" type="plane" size="2 2 0.1" rgba="0.8 0.8 0.8 1"/>
+
+    <!-- Camera faces the balls -->
+    <camera name="cam_front" pos="0 -1.2 0.35" xyaxes="1 0 0 0 0 1" fovy="45"/>
+
+    <!-- Balls are aligned along X, equally spaced -->
+    <!-- String length = 0.25 m, ball radius = 0.03 m -->
+    <body name="cradle_root" pos="0 0 0.45">
+      <!-- optional invisible reference -->
+      <geom name="root_ref" type="sphere" size="0.001" rgba="0 0 0 0" contype="0" conaffinity="0"/>
+
+      <!-- Leftmost ball -->
+      <body name="ball1" pos="-0.12 0 0">
+        <joint name="ball1_joint" type="hinge" axis="0 1 0" damping="0.0"/>
+        <geom name="string1" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <geom name="ball1_geom" type="sphere" pos="0 0 -0.25" size="0.03" material="metal_shiny"
+              density="7800"/>
+      </body>
+
+      <!-- Middle balls: hanging straight down -->
+      <body name="ball2" pos="-0.06 0 0">
+        <joint name="ball2_joint" type="hinge" axis="0 1 0" damping="0.0"/>
+        <geom name="string2" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <geom name="ball2_geom" type="sphere" pos="0 0 -0.25" size="0.03" material="metal_shiny"
+              density="7800"/>
+      </body>
+
+      <body name="ball3" pos="0 0 0">
+        <joint name="ball3_joint" type="hinge" axis="0 1 0" damping="0.0"/>
+        <geom name="string3" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <geom name="ball3_geom" type="sphere" pos="0 0 -0.25" size="0.03" material="metal_shiny"
+              density="7800"/>
+      </body>
+
+      <body name="ball4" pos="0.06 0 0">
+        <joint name="ball4_joint" type="hinge" axis="0 1 0" damping="0.0"/>
+        <geom name="string4" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <geom name="ball4_geom" type="sphere" pos="0 0 -0.25" size="0.03" material="metal_shiny"
+              density="7800"/>
+      </body>
+
+      <body name="ball5" pos="0.12 0 0">
+        <joint name="ball5_joint" type="hinge" axis="0 1 0" damping="0.0"/>
+        <geom name="string5" type="capsule" fromto="0 0 0  0 0 -0.25" size="0.002"
+              material="string_mat" contype="0" conaffinity="0"/>
+        <geom name="ball5_geom" type="sphere" pos="0 0 -0.25" size="0.03" material="metal_shiny"
+              density="7800"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- Notes:
+       - Mass is implied via density (steel-like 7800 kg/m^3) and sphere radius 0.03 m.
+       - Initial velocity is 0; initial configuration has ball1 displaced by 30 degrees and "released".
+       - Strings are visual only (capsules with no collision). Constraint is via hinge joints at the anchors.
+  -->
+</mujoco>
