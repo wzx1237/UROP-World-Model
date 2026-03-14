@@ -5,5 +5,24 @@ Due to gravity, the ball comes and strikes the second ball from the left. This c
 这是一个我自己写的示例：
 Generate a video that showcase the following scene: Initially, there are 2 balls fall due to the gravity from height = 1m. 
 One ball is made from metal, another one is made from wood. Both of them has radius = 0.1m. 
-After it hits the ground, it rebounds up. Note that the height of the ball rebound will be less than the height of the object's fall and the metal ball will rebound higher than the wood ball. 
+After it hits the ground, it rebounds up. Note that the height of the ball rebound will be less than the height of the objects fall and the metal ball will rebound higher than the wood ball. 
 Then, the two ball will repeat this process: rebound lower and lower until stop on the ground.
+
+示例：(来自PISA sim/seen/01)
+Generate a video that showcase the following scene: Create a 4‑second low-angle midground shot of a single blue sneaker moving from right → center-left across the frame. Camera: ground-level perspective, slight three-quarter view so the shoe's outer side and sole edge are visible; background should be out of focus and unobtrusive (nighttime plaza, soft lights) — focus entirely on the shoe's motion.
+
+Motion profile:
+Horizontal: steady, constant-speed translation from off-screen right to center-left across the midplane.
+Vertical: rhythmic up-and-down oscillation (bobbing) that repeats evenly — about 2 bounces per second. Peak lift is small: the shoe rises ~20–30% of its own height above its lowest point.
+Contact: the shoe never fully flattens on the ground — it hovers slightly, then briefly 'lands' close to the surface before rebounding; treat landings as soft, bounce-like impulses rather than hard stomps.
+Rotation / attitude: small pitch around the lateral axis — toe tilts up on ascent and down on descent (±15–25°); add a subtle yaw shift (≤10°) so the visible side and sole edge change slightly as it moves; no full spin.
+Shadow sync: include a ground shadow that scales and darkens as the shoe descends (shadow smallest and faintest at apex, largest and darkest at lowest point) to read altitude clearly.
+
+Duration: 4 s
+Horizontal travel: ~60–70% of frame width (from off-screen right to center-left)
+Vertical amplitude: ~0.2–0.3 × shoe height
+Pitch range: ±15–25°, yaw ≤10°
+
+示例：(来自PISA sim/seen/03)
+Generate a video that showcase the following scene: A rectangular box falls from the sky onto a flat dirt field, landing directly on a small white sheep toy. 
+Upon impact, the toy instantly explodes into a burst of white smoke. Static camera, desolate landscape with distant hills.
