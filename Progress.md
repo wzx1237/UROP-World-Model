@@ -97,3 +97,14 @@ Specifically, we construct a joint angle–conditioned 3D Gaussian model of the 
 - 复现确实成功了，但是仅限于论文中的简单物理小实验。对于一个复杂场景，复现的效果确实不好
 - 我找到了之前为什么video feedback之后效果越来越差的原因：我忘记改init code的model了。本来应该是gpt来init下一个generation的code的，但是default model似乎是Qwen 2.5, 所以改了之后效果不行。但是有一个需要注意的地方，就是qwen自己改代码效果也是越来越差的，这个原因不清楚
 - eval (PISA)发现它loss只会看mask，完全不管背景是什么样的。(mask will extract the motion feature from our video) 可以**尝试把seen 04的mask和seen 01的mask去evaluate，结果发现它们的loss相当的低**. 01的背景是一个欧式的教堂；04的背景感觉像一个工厂的车间，而且里面物体的数量还不一样. (L2: 0.0818761487588909; Chamfer Distance: 0.19338074362212143; IoU: 0.001124466390365763)
+
+# 2026.3.18
+## 测试eval
+- 为什么这个loss测出来是这样的？是不是我找错mask了？(以下是seen 01和我GitHub中那个不明的鞋子的loss)
+Task: sim_default_task
+
+L2: 0.19989225538250033
+
+Chamfer Distance: 0.5364788277490935
+
+IoU: 0.0
