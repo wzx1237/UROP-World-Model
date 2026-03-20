@@ -111,10 +111,24 @@ IoU: 0.0
 
 ## update on 3.20
 - 难以置信，这两东西跑出来的loss真是这个。我觉得有必要跑一遍这个PISA的eval的base line. 具体可以看到我生成的两个mask, 它的实现是用mask蒙住图中出现变化的地方, （颜色的变化也算）。
-- 第二点，完全复现PISA的eval有点问题，他在提供的sim data/cilp_json.jsonl中没有给我们提供必要的"points", "num_obj", "points["negative"]", "points["positive]", 导致直接复现它的代码不行。所以我用了第二招：使用sam2论文中给我的Automatic Mask Generator来生成mask, 发现它生成的mask和论文中提供的mask不太一样. 以下是这几个mask间的L2 loss:
+- 第二点，完全复现PISA的eval有点问题，他在提供的sim data/cilp_json.jsonl中没有给我们提供必要的"points", "num_obj", "points["negative"]", "points["positive]", 导致直接复现它的代码不行。所以我用了第二招：使用sam2论文中给我的Automatic Mask Generator来生成mask, 发现它生成的mask和论文中提供的mask不太一样. 以下是这几个mask间的L2 loss，CD, IoU:
 
 | L2 Loss | mydemo | 论文mask | mymask |
 | :---    | :---   | :---       | :---   |
 | mydemo  | 0      | 0.19989 | 0.22731   |
 | 论文mask | ---   | 0       | 0.20285  |
 | my mask | ---    | ---     | 0         |
+
+| CD | mydemo | 论文mask | mymask |
+| :---    | :---   | :---       | :---   |
+| mydemo  | 0      | 0.53647 | 0.67378   |
+| 论文mask | ---   | 0       | 0.53703  |
+| my mask | ---    | ---     | 0         |
+
+| IoU | mydemo | 论文mask | mymask |
+| :---    | :---   | :---       | :--- |
+| mydemo  | 0      | 0.0 | 0.74193   |
+| 论文mask | ---   | 0       | 0.0  |
+| my mask | ---    | ---     | 0    |
+
+注：原论文中它的结果差不多是：L2: 0.036， CD: 0.08，IoU: 0.165
