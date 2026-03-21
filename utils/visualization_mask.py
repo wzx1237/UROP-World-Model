@@ -9,17 +9,17 @@ import os
 # 3. 输出的gif名字是不是会覆盖之前的
 
 # 0. load base dir
-BASE_DIR = "/homes/zwanglg/wzxhome/PISA/eval_data/result/"
+BASE_DIR = "/homes/zwanglg/wzxhome/PISA/eval_data/01/"
 
 # 1. 读取 mask.npz
 mask_data = np.load(os.path.join(BASE_DIR, "mask.npz"))
 mask_array = mask_data["mask"]   # shape: [V, N, H, W]
 
 # 2. 读取对应的 jpg 帧
-frame_files = sorted(glob.glob(os.path.join(BASE_DIR, "output_*.jpg")))
+frame_files = sorted(glob.glob(os.path.join(BASE_DIR, "rgba_*.jpg")))
 
 # 3. 输出 gif 路径
-DST_GIF = "/homes/zwanglg/wzxhome/PISA/eval_data/vis_mask/my_result_mask.gif"
+DST_GIF = "/homes/zwanglg/wzxhome/PISA/eval_data/vis_mask/paper_mask.gif"
 
 frames_out = []
 
