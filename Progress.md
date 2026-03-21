@@ -138,3 +138,33 @@ IoU: 0.0
 Idea:
 1. 我发现它这个loss只看mask, 而mask只是把运动、变化的物体给提取出来。所以背景是什么压根无所谓，我们可以先忽略背景，直接生成物体
 2. 我发现它mask生成物体运动的效果还不错。挺像剪影的。所以有没有一种可能：我喂给这个agent的不是原视频，而是这个mask? 因为我试了让agent (GPT 5.2, Gemini 3.5)根据视频写文字prompt, 效果并不是很好。可以看的出来它们专注于描述复杂的背景，不擅长描述物体怎么动的。即便我强行要求GPT忽视背景，描述物体的运动，它描述的也不是很好 (描述没有主次，明明是往下掉，它却花了大篇幅描述物体掉到地上怎么左右滚的...), 所以可不可以给agent看mask, 让他写出来生成mask的模拟
+
+## update on 3.21
+我通过加points的方法发现可以通过添加点的方式来达到论文中mask的效果，但是这个方法不是很能持续...
+
+下面是对generate_mask.py和clip_json.json的修改：
+```python
+# 这里如果自己去猜这个points会让返回的array.shape不是(V, N, H, W)而是(V, H, W)
+# 为了解决这个问题，我要加一点代码：
+ADD_POINTS = True
+
+# ...
+masks = (masks > 0.0).cpu().numpy() # [num_frames, num_objects, height, width]
+if ADD_POINTS:
+    # 假设 masks 的 shape 是 (V, H, W)，而你知道 num_objects = 1
+    masks = np.expand_dims(masks, axis=1)   # 变成 (V, 1, H, W)
+
+np.savez_compressed(mask_path, mask=masks)
+```
+
+```json
+{
+  "prompt": "A shoe falls. You need to generate video that conforms to the laws of physics.", 
+  "points": [
+      {
+        "positive": [[613, 439]], 
+        "negative": [[466, 439], [328, 439]]
+      }
+    ]
+}
+```
