@@ -30,7 +30,7 @@ model = AutoModelForCausalLM.from_pretrained(
 # --- Third-party OpenAI-compatible API configuration ---
 # Some LLM calls (gemini / gpt) are routed through this single endpoint.
 API_BASE_URL = os.getenv("ANTHROPIC_BASE_URL", "https://singles-founder-america-confidence.trycloudflare.com") + "/v1"
-API_KEY = os.getenv("ANTHROPIC_API_KEY", "sk-5CszlNZPUATmhL09ZnTdDanh6s8s2KTgBggArUUxXysdsa8u")
+API_KEY = os.getenv("ANTHROPIC_API_KEY", "PUT YOUR KEY HERE")
 DEFAULT_MODEL = os.getenv("ANTHROPIC_DEFAULT_SONNET_MODEL", "gpt-5.2")
 
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
