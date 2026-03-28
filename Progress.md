@@ -168,3 +168,26 @@ np.savez_compressed(mask_path, mask=masks)
     ]
 }
 ```
+
+
+# 2026.3.28
+## 调研现有benchmark
+In the MoReGen paper, I find that they cite several benchmark to illustrate the advancement of their benchmark, MoReGen (that benchmark haven't public yet). However, it seems like that they didn't test all of these benchmark. Such as PISA benchmark, I don't think it is runnable. The benchmark lack of serval key labels: positive points and negative points, which tell the mask generator to **trace which object (positive points)**, and **do not trace which one (nagative points)**. I tried to raise the issue, but no one reply. Also, I have sent the email to the author, but he didn't reply me too.
+
+Then, I notice that in the paper, they use **benchmark Trajan and VideoPhys** for evaluation. So, I decided to look at it.
+
+## VideoPhys
+It mainly evaluates two thing:
+- Semantic Adherence (SA): 观察你生成的视频是不是和你的prompt一致。SA = 1, 一致；SA = 0， 不一致
+- Physical Commonsense (PC): 观察物体的运动是不是遵循physical law. PC = 1，遵循物理定律；PC = 0，不遵循物理定律
+
+注：在VideoPhys2中，它有增加了一条评价标准Physical Rules, 并且增加了SA和PC的评价打分方式(into 5-point scale)：
+- Semantic Adherence (SA): 1: Very Unlikely; 2: Unlikely; 3: Neutral; 4: Likely; 5: Very Likely
+- Physical Commonsense (PC): 1: Very Unlikely; 2: Unlikely; 3: Neutral; 4: Likely; 5: Very Likely
+- Physical Rules (PR): 观察视频是否遵循了physical law.  0: violated; 1: followed; 2: cannot be determined
+
+他又加了一种joint performance的评价方法：$SA \ge 4$ and $PC \ge 4$
+
+注：他这个peft和transformer不太兼容；要把peft的版本调到0.10.1
+
+可以在demo中看到他给定的target output (output_sa.csv)和我复现出来的output (my_output_sa.csv)
