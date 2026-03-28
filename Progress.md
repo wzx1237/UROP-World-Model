@@ -190,4 +190,12 @@ It mainly evaluates two thing:
 
 注：他这个peft和transformer不太兼容；要把peft的版本调到0.10.1
 
-可以在demo中看到他给定的target output (output_sa.csv)和我复现出来的output (my_output_sa.csv)
+可以在demo中看到他给定的target output (output_sa.csv)和我复现出来的output (my_output_sa.csv), 它们不太一样...
+SA部分my_output和output相差了5组；PC部分有两个不一样的；PR部分有一个不一样的。这个原因不明
+
+VideoCon‑Physics是他训练的模型(7B), 用regression去predict SA, PC; 用classification去predict PR.
+
+## Trajan
+It mainly focus on **The Trajectory of the object**.
+
+注：不同于普通的轨迹对比(Trajectory L2 loss), 这个model可以在没有对比视频的情况下进行evaluate. 这是因为这个model可以通过轨迹重建的方式观察你这个视频的重建误差，误差大就说明运动轨迹不合理.
