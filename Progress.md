@@ -199,3 +199,14 @@ VideoCon‑Physics是他训练的模型(7B), 用regression去predict SA, PC; 用
 It mainly focus on **The Trajectory of the object**.
 
 注：不同于普通的轨迹对比(Trajectory L2 loss), 这个model可以在没有对比视频的情况下进行evaluate. 这是因为这个model可以通过轨迹重建的方式观察你这个视频的重建误差，误差大就说明运动轨迹不合理.
+
+# 2026.4.9
+## Kubric
+上周去装了一下kubric, 发现kubric建议使用docker去装；没办法，只能往ssh里面装docker了。国内的服务器没法安装docker, 因为被墙拦住了。我打算这周去试试国外的服务器，比如AWS和Google
+
+## pybullet
+同时，我在测试pybullet.
+1. 安装方面：
+      - pybullet和manim不一样，它没有现成的CLI文档；所以直接调用bin\python即可
+      - pybullet似乎不支持mp4视频的输出。不过无所谓，mp4视频本来就不是必须要的，我问了一下GPT，它给我的建议是直接输出逐帧的RBG的jpg图片，然后将query_vedio(use_frames = True, ...)即可; 它给我的query_video函数有原生的支持
+2. 调试方面：
