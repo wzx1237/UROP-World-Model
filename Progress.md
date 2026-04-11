@@ -217,7 +217,7 @@ It mainly focus on **The Trajectory of the object**.
       I_{xx} &= \frac{m}{12}(y^{2} + z^{2}) \\
       I_{yy} &= \frac{m}{12}(x^{2} + z^{2}) \\
       I_{zz} &= \frac{m}{12}(x^{2} + y^{2}) \\
-      I_{xy} &= I_{yz} = I_{xz} = 0
+      I_{xy} = I_{yz} = I_{xz} &= 0
       \end{aligned}
       $$
       - 第三，
