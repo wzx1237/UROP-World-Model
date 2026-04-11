@@ -2,10 +2,10 @@ from openai import OpenAI
 import os
 
 API_BASE_URL = os.getenv("ANTHROPIC_BASE_URL", "https://openrouter.ai/api/v1")
-API_KEY = os.getenv("ANTHROPIC_API_KEY", "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")
+API_KEY = os.getenv("ANTHROPIC_API_KEY", "PUT_YOUR_KEY_HERE")
 DEFAULT_MODEL = os.getenv("ANTHROPIC_DEFAULT_SONNET_MODEL", "moonshotai/kimi-k2.5")
 
-api_key = "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"
+api_key = "PUT_YOUR_KEY_HERE"
 
 client = OpenAI(
   api_key = API_KEY,
