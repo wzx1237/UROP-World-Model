@@ -212,10 +212,10 @@ It mainly focus on **The Trajectory of the object**.
 2. 调试方面：
       - 第一，pybullet实际上是鼓励你使用mesh/URDF的。虽然直接使用create collision shape可以在我们的代码里创建geom; 但是这样出来的效果并不理想。(from Deepseek: 在pybullet中，loadURDF是绝对主流的想法，而选择更底层的API，如createCollisionShape则用于处理特定或临时的几何体)
       - 第二，pybullet在使用URDF时，如果要指定inertia, inertia的计算不能出错，否则有可能出现物体下落的很缓慢的情况。以下时inertia的计算公式(for a box)：
-      \begin{aligned}
-      $$I_{xx} = \frac{m}{12}(y^{2} + z^{2}) \\
-      I_{yy} = \frac{m}{12}(x^{2} + z^{2}) \\
-      I_{zz} = \frac{m}{12}(x^{2} + y^{2}) \\
-      I_{xy} = I_{yz} = I_{xz} = 0 $$
-      \end{aligned}
+      $$\begin{aligned}
+      I_{xx} &= \frac{m}{12}(y^{2} + z^{2}) \\
+      I_{yy} &= \frac{m}{12}(x^{2} + z^{2}) \\
+      I_{zz} &= \frac{m}{12}(x^{2} + y^{2}) \\
+      I_{xy} &= I_{yz} = I_{xz} = 0
+      \end{aligned}$$
       - 第三，
