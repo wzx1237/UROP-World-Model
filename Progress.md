@@ -221,3 +221,18 @@ It mainly focus on **The Trajectory of the object**.
         \end{aligned}
         $$
       - 第三，
+
+## PhysX-Anything
+对于installation of nvdiffrast 和 flash attn, 详情请参见install guidance. 实际上学校给我们提供了CUDA=11.8的tool kit.我们可以直接进行export CUDA_HOME=/usr/local/cuda-11.8就行
+
+其次，我看了一眼这个2_decoder.py. 我发现这边有个path不太对。估计是因为我的file structure和它不一样吧。以下是修改(line 13:)
+```python
+# Load a pipeline from a model folder or a Hugging Face model hub.
+# 这里，我要把它改成绝对路径
+# pipeline = TrellisImageTo3DPipeline.from_pretrained("./pretrain/decoder")
+pipeline = TrellisImageTo3DPipeline.from_pretrained("/homes/zwanglg/wzxhome/PhysX-Anything/pretrain/decoder")
+```
+
+注意事项：每次activate conda, 记得export CUDA_HOME等东西; 记得comment掉代码里的ipdb, 这个module用不上
+
+运行结果(04/18/2026)：就目前而言不太乐观，它好像把鞋子认成桌椅了...
