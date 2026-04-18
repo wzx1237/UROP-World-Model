@@ -1,0 +1,69 @@
+nvdiffrast 安装记录（PhysX-Anything / conda env: physx-anything）
+日期：2026-04-18
+
+目标
+- 解决运行 2_decoder.py 报错：ModuleNotFoundError: No module named 'nvdiffrast'
+- 在 conda 环境 physx-anything 内成功安装可用的 nvdiffrast（支持 import nvdiffrast.torch as dr）。
+
+背景与踩坑点（为什么一开始装不上）
+1) nvdiffrast 是 CUDA 扩展：不能只靠 pip 的 nvidia runtime wheels；需要可用的 CUDA 编译工具链。
+2) PyTorch 版本为 torch 2.4.0+cu118（torch.version.cuda = 11.8），编译扩展时“检测到的 nvcc CUDA 版本”必须与 11.8 一致。
+3) conda env 内曾出现 nvcc=13.2（以及大量 cuda-* 13.2 包），导致构建直接报：
+   - The detected CUDA version (13.2) mismatches the version that was used to compile PyTorch (11.8)
+4) 即便把 nvcc 调回 11.8，conda CUDA 目录结构与常规 /usr/local/cuda 不同，headers 在 targets/x86_64-linux/include；
+   如果 CUDA_HOME 指错，会报：fatal error: cuda_runtime_api.h: No such file or directory。
+5) 在 conda 里“拼”CUDA_HOME 还可能引入 NVVM/内部工具链混装，出现 nvcc 编译报：
+   - Command-line error #571: invalid option: --orig_src_path_name
+
+最终可复现的成功方案（推荐）
+结论：使用系统 CUDA 11.8（/usr/local/cuda-11.8）来编译安装 nvdiffrast，最稳定。
+
+步骤 0：进入 bash（不要用 tcsh）
+- 在 bash 中执行后续命令（tcsh 下 conda activate 容易出问题）。
+
+步骤 1：激活 conda 环境
+
+  source /homes/zwanglg/wzxhome/miniconda3/etc/profile.d/conda.sh
+  conda activate physx-anything
+
+步骤 2：显式指定系统 CUDA 11.8 工具链（关键）
+
+  export CUDA_HOME=/usr/local/cuda-11.8
+  export PATH="$CUDA_HOME/bin:$PATH"
+  export LD_LIBRARY_PATH="$CUDA_HOME/lib64:${LD_LIBRARY_PATH:-}"
+  export CUDACXX="$CUDA_HOME/bin/nvcc"
+
+（可选检查）
+  nvcc --version
+  python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
+
+步骤 3：用 pip 编译安装 nvdiffrast（关键：--no-build-isolation）
+
+  python -m pip install --no-build-isolation --upgrade --no-cache-dir \
+    "git+https://github.com/NVlabs/nvdiffrast.git"
+
+成功时会看到类似输出：
+- Building wheel for nvdiffrast ... done
+- Successfully built nvdiffrast
+- Successfully installed nvdiffrast-0.4.0
+
+步骤 4：验证安装
+
+  python - <<'PY'
+import torch
+print('cuda available:', torch.cuda.is_available())
+import nvdiffrast
+import nvdiffrast.torch as dr
+print('nvdiffrast version:', getattr(nvdiffrast, '__version__', '(no __version__)'))
+print('nvdiffrast.torch import OK:', dr)
+PY
+
+本次验证结果（节选）
+- torch.cuda.is_available() -> True
+- nvdiffrast 0.4.0
+- nvdiffrast.torch import OK <module 'nvdiffrast.torch' ...>
+
+补充说明
+- 之所以必须加 --no-build-isolation：nvdiffrast 构建依赖 torch 的编译配置，隔离构建环境常导致“构建时找不到 torch/torch headers”。
+- 如果后续又遇到 CUDA version mismatch：优先检查当前 shell 下 `which nvcc` / `nvcc --version`，确保来自 /usr/local/cuda-11.8。
+- 在正确安装后，echo $CUDA_HOME应该显示: /homes/zwanglg/wzxhome/miniconda3/envs/physx-anything
