@@ -236,3 +236,7 @@ pipeline = TrellisImageTo3DPipeline.from_pretrained("/homes/zwanglg/wzxhome/Phys
 注意事项：每次activate conda, 记得export CUDA_HOME等东西; 记得comment掉代码里的ipdb, 这个module用不上
 
 运行结果(04/18/2026)：就目前而言不太乐观，它好像把鞋子认成桌椅了...
+
+看来这个PhysX-Anything有一点吃显存；我一张3090 24GB的显存被吃满了，即便从xformer换成了flash-attn还是不行
+
+不过好消息是我看到了运行结果：它有两个mesh生成，第一个mesh看起来像是一个扁平的圆盘；第二个mesh像是一个凳子的支架(就像马扎那种的，但是没有像马扎那样可以活动的hinge)
