@@ -239,4 +239,4 @@ pipeline = TrellisImageTo3DPipeline.from_pretrained("/homes/zwanglg/wzxhome/Phys
 
 看来这个PhysX-Anything有一点吃显存；我一张3090 24GB的显存被吃满了，即便从xformer换成了flash-attn还是不行
 
-不过好消息是我看到了运行结果：它有两个mesh生成，第一个mesh看起来像是一个扁平的圆盘；第二个mesh像是一个凳子的支架(就像马扎那种的，但是没有像马扎那样可以活动的hinge)
+不过好消息是我看到了运行结果：它有两个mesh生成，第一个mesh看起来像是一个扁平的圆盘；第二个mesh像是一个凳子的支架(就像马扎那种的，但是没有像马扎那样可以活动的hinge) 需要注意的是，这两个mesh要拼起来才是我们完整的物体。也就是放在一个urdf文档中。但是，这个pretrain model生成他自己给的demo的mesh效果不错；但是生成我扣下来的图片的效果不怎么样

@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="scene">
+  <link name="l_world">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </link>
+  <link name="l_2">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/2/2.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <link name="l_3">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/3/3.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <link name="l_4">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/4/4.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <joint name="joint_fixed_2_3" type="fixed">
+    <parent link="l_2" />
+    <child link="l_3" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="joint_fixed_3_4" type="fixed">
+    <parent link="l_3" />
+    <child link="l_4" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="joint_fixed_world2" type="fixed">
+    <parent link="l_world" />
+    <child link="l_2" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <link name="l_0">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/0/0.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <link name="l_1">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/1/1.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <joint name="joint_fixed_0_1" type="fixed">
+    <parent link="l_0" />
+    <child link="l_1" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <link name="abstract_2_0">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </link>
+  <joint name="joint_fixed_abstract_2_0" type="fixed">
+    <parent link="abstract_2_0" />
+    <child link="l_0" />
+    <origin xyz="0.5 -0.14749999999999996 0.1740625" rpy="0 0 0" />
+  </joint>
+  <joint name="joint_revolute_l_2_abstract_2_0" type="revolute">
+    <parent link="l_2" />
+    <child link="abstract_2_0" />
+    <origin xyz="-0.5 0.14749999999999996 -0.1740625" rpy="0 0 0" />
+    <axis xyz="1.0 0.0 0.0" />
+    <limit lower="-0.17453292519943295" upper="0.0" effort="2000.0" velocity="2.0" />
+  </joint>
+  <link name="l_5">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="./objs/5/5.obj" scale="1 1 1" />
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+    </visual>
+  </link>
+  <link name="abstract_2_5">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="1.0" />
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+    </inertial>
+  </link>
+  <joint name="joint_fixed_abstract_2_5" type="fixed">
+    <parent link="abstract_2_5" />
+    <child link="l_5" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  <joint name="joint_free_l_2_abstract_2_5" type="floating">
+    <parent link="l_2" />
+    <child link="abstract_2_5" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+</robot>

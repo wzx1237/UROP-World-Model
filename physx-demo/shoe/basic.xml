@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="test">
+    <compiler angle="radian" autolimits="true" />
+    <option timestep="0.002" gravity="0 0 -9.81" wind="0 0 0" integrator="implicitfast" density="1.225" viscosity="1.8e-05" />
+    <visual>
+        <global realtime="1" />
+        <quality shadowsize="16384" numslices="28" offsamples="4" />
+        <headlight diffuse="2 2 2" specular="0.5 0.5 0.5" active="1" />
+        <rgba fog="0 1 0 1" haze="1 0 0 1" />
+    </visual>
+    <asset>
+        <mesh name="l_0_Back Surface" file="./objs/0/0.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_0_Back Surface_tex" file="./objs/0/material_0.png" />
+        <material name="l_0_Back Surface_img" texture="l_0_Back Surface_tex" />
+        <mesh name="l_1_Back Support" file="./objs/1/1.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_1_Back Support_tex" file="./objs/1/material_0.png" />
+        <material name="l_1_Back Support_img" texture="l_1_Back Support_tex" />
+        <mesh name="l_2_Seat Surface" file="./objs/2/2.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_2_Seat Surface_tex" file="./objs/2/material_0.png" />
+        <material name="l_2_Seat Surface_img" texture="l_2_Seat Surface_tex" />
+        <mesh name="l_3_Seat Support" file="./objs/3/3.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_3_Seat Support_tex" file="./objs/3/material_0.png" />
+        <material name="l_3_Seat Support_img" texture="l_3_Seat Support_tex" />
+        <mesh name="l_4_Ground Surface" file="./objs/4/4.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_4_Ground Surface_tex" file="./objs/4/material_0.png" />
+        <material name="l_4_Ground Surface_img" texture="l_4_Ground Surface_tex" />
+        <mesh name="l_5_Footrest" file="./objs/5/5.obj" scale="1.2 1.2 1.2" />
+        <texture type="2d" name="l_5_Footrest_tex" file="./objs/5/material_0.png" />
+        <material name="l_5_Footrest_img" texture="l_5_Footrest_tex" />
+        <texture type="skybox" file="./desert.png" gridsize="3 4" gridlayout=".U..LFRB.D.." />
+        <texture name="plane" type="2d" builtin="checker" rgb1=".1 .1 .1" rgb2=".5 .5 .5" width="512" height="512" mark="cross" markrgb=".8 .8 .8" />
+        <material name="plane" reflectance="0.3" texture="plane" texrepeat="1 1" texuniform="true" />
+    </asset>
+    <default>
+        <geom solref=".5e-4" solimp="0.9 0.99 1e-4" fluidcoef="0.5 0.25 0.5 2.0 1.0" />
+        <default class="l_0_Back Surface">
+            <geom type="mesh" mesh="l_0_Back Surface" contype="1" conaffinity="1" density="30.0" fluidshape="ellipsoid" />
+        </default>
+        <default class="l_1_Back Support">
+            <geom type="mesh" mesh="l_1_Back Support" contype="1" conaffinity="1" density="600.0" fluidshape="ellipsoid" />
+        </default>
+        <default class="l_2_Seat Surface">
+            <geom type="mesh" mesh="l_2_Seat Surface" contype="1" conaffinity="1" density="30.0" fluidshape="ellipsoid" />
+        </default>
+        <default class="l_3_Seat Support">
+            <geom type="mesh" mesh="l_3_Seat Support" contype="1" conaffinity="1" density="600.0" fluidshape="ellipsoid" />
+        </default>
+        <default class="l_4_Ground Surface">
+            <geom type="mesh" mesh="l_4_Ground Surface" contype="1" conaffinity="1" density="600.0" fluidshape="ellipsoid" />
+        </default>
+        <default class="l_5_Footrest">
+            <geom type="mesh" mesh="l_5_Footrest" contype="1" conaffinity="1" density="30.0" fluidshape="ellipsoid" />
+        </default>
+    </default>
+    <worldbody>
+        <geom name="floor" pos="0 0 0" size="0 0 .25" type="plane" material="plane" condim="6" />
+        <light directional="true" ambient=".3 .3 .3" pos="30 30 30" dir="0 -2 -1" diffuse=".5 .5 .5" specular=".5 .5 .5" />
+        <body name="base" pos="0 0 1" euler="0 0 0">
+            <freejoint />
+            <geom class="l_2_Seat Surface" material="l_2_Seat Surface_img" />
+            <geom class="l_3_Seat Support" material="l_3_Seat Support_img" />
+            <geom class="l_4_Ground Surface" material="l_4_Ground Surface_img" />
+            <body name="grouppart_1" pos="0 0 0">
+                <joint type="hinge" name="pivot_1" axis="1.0 0.0 0.0" pos="-0.6 0.17699999999999996 -0.208875" range="-0.17453292519943295 0.0" damping="0.001" frictionloss="0.0" stiffness="0" />
+                <geom class="l_0_Back Surface" material="l_0_Back Surface_img" />
+                <geom class="l_1_Back Support" material="l_1_Back Support_img" />
+            </body>
+        </body>
+        <body name="grouppart_2" pos="0 0 1" euler="0 0 0">
+            <freejoint />
+            <geom class="l_5_Footrest" material="l_5_Footrest_img" />
+        </body>
+    </worldbody>
+</mujoco>
