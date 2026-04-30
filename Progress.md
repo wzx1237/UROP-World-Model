@@ -240,3 +240,10 @@ pipeline = TrellisImageTo3DPipeline.from_pretrained("/homes/zwanglg/wzxhome/Phys
 看来这个PhysX-Anything有一点吃显存；我一张3090 24GB的显存被吃满了，即便从xformer换成了flash-attn还是不行
 
 不过好消息是我看到了运行结果：它有两个mesh生成，第一个mesh看起来像是一个扁平的圆盘；第二个mesh像是一个凳子的支架(就像马扎那种的，但是没有像马扎那样可以活动的hinge) 需要注意的是，这两个mesh要拼起来才是我们完整的物体。也就是放在一个urdf文档中。但是，这个pretrain model生成他自己给的demo的mesh效果不错；但是生成我扣下来的图片的效果不怎么样
+
+## 2026.4.30
+这个physx-anything的pipeline如下：
+1. 使用自己training的model来生成voxel, prompt, 还有description. 这里最为重要的是voxel, 它相当于使用一堆积木来模拟物体的形状(积木的size是: $32*32*32$), 原本的积木块是有坐标的: (x, y, z). 但是他给每个积木块的位置进行编码(in function: voxel_encode, 1_vlm_demo.py). 这样一来，原本的坐标(x, y, z)就变成了在1到32768之间的一个数字。这就是为什么他论文的那张图片会有这么多数字来描述geometry information
+2. 由第一步生成的东西是非常的粗糙的，所以要进行第二步: decoder. 这一步的主要目的是使用TRELLI的能力来将这样一个粗糙的模型变成一个细致的mesh
+3. split.py将2中生成的结果变成mesh
+4. simready_gen.py会将3中生成的mesh拼起来变成一个urdf文件(但是貌似他没有collision, 后面要补上，要不然这个物体没法完成碰撞)
