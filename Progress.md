@@ -247,3 +247,37 @@ pipeline = TrellisImageTo3DPipeline.from_pretrained("/homes/zwanglg/wzxhome/Phys
 2. 由第一步生成的东西是非常的粗糙的，所以要进行第二步: decoder. 这一步的主要目的是使用TRELLI的能力来将这样一个粗糙的模型变成一个细致的mesh
 3. split.py将2中生成的结果变成mesh
 4. simready_gen.py会将3中生成的mesh拼起来变成一个urdf文件(但是貌似他没有collision, 后面要补上，要不然这个物体没法完成碰撞)
+
+Update on the OOM issue:
+我总是发现这个2_decoder.py在运行的时候会产生Out of Memory(OOM)的问题, 以下是我从GPT那里得到的回答：
+1. run_control() 原来没有 no_grad，会建反向图 → 显存暴涨
+    - 在 Trellis 的实现里，run() 是 @torch.no_grad()，但你调用的 run_control()（以及 run_decoder()）原本没有这个装饰器，所以推理时会保留大量中间激活用于反传，1.2B 级别模型非常容易直接 OOM
+    - 我已经把 run_control/run_decoder 都补上了 @torch.no_grad()：见 trellis_image_to_3d.py:324-372
+2. 你的 to_glb() 后处理本身就可能把 48GB 吃爆. 在./utils/postprocessing_utils.to_glb()中，他在内部做了很多CUDA后处理。fill_holes_num_views=1000 的多视角栅格化 + 图割（GPU/CPU 混合，但大量 CUDA 张量）render_multiview(... resolution=1024, nviews=100) bake_texture(... mode='opt') 还会跑 2500 步 loss.backward() 做纹理优化（见 postprocessing_utils.py:399-478 和 postprocessing_utils.py:276-360）**So,就算模型推理本身能过，很多时候也会在 to_glb() 这里 OOM**
+
+所以，GPT做了如下的改进:
+
+in ./treills/pipelines/trellis_image_to_3d.py (line 324 and line 361) add the following code:
+```python
+@torch.no_grad()
+```
+
+in ./2_decoder.py (line 18) add the following code:
+```python
+torch.set_grad_enabled(False)
+```
+and change "ss" from (line 36)
+```python
+ss = torch.zeros(1, ...)
+```
+to:
+```python
+# Build control volume directly on GPU and in FP16 to avoid implicit upcasting.
+        coords = torch.as_tensor(newcoords, device='cuda', dtype=torch.long)
+        ss = torch.zeros((1, resolution, resolution, resolution), device='cuda', dtype=torch.float16)
+        ss[:, coords[:, 0], coords[:, 1], coords[:, 2]] = 1
+        ss = ss.unsqueeze(0)  # (1, 1, D, H, W)
+
+        with torch.inference_mode(), torch.autocast(device_type='cuda', dtype=torch.float16):
+            outputs = pipeline.run_control(ss, image, seed=1)
+```
