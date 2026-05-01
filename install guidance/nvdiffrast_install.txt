@@ -67,3 +67,9 @@ PY
 - 之所以必须加 --no-build-isolation：nvdiffrast 构建依赖 torch 的编译配置，隔离构建环境常导致“构建时找不到 torch/torch headers”。
 - 如果后续又遇到 CUDA version mismatch：优先检查当前 shell 下 `which nvcc` / `nvcc --version`，确保来自 /usr/local/cuda-11.8。
 - 在正确安装后，echo $CUDA_HOME应该显示: /homes/zwanglg/wzxhome/miniconda3/envs/physx-anything 或者 /usr/local/cuda-11.8
+
+Update . ./setup.sh:
+- 我更新了setup.sh, 为nvdiffrast的安装添加了 "--no-build-isolation" 的flag; 这样一来，就可以直接通过: . ./setup.sh --nvdiffrast
+来安装了
+- 我更新了它的torch安装方式；他原本的安装会下一个torch的CPU版本，我现在强行制定了index url来让它从官方站下载torch
+- 它的pytorch version的判定有点问题; 如果下的是GPU版本的torch, print(torch.__version__)会返回"2.4.0+cu118"而不是2.4.0
