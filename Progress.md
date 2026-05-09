@@ -289,3 +289,13 @@ The model I use is: "IDEA-Research/grounding-dino-base". If you want to use it, 
 ```
 python object_point_locator.py
 ```
+
+The following table shows the result:
+| sample  | L2 loss  | CD         | IoU     |
+| :--     | :--      | :--        | :--     |
+| standard| 0.0      | 0.0        | 1.0     |
+| seen 01 | 0.00045  | 9.6230e-05 | 0.92399 |
+| seen 28 | 0.00036  | 6.5913e-05 | 0.92901 |
+| seen 29 | 0.00030  | 3.3823e-05 | 0.96526 |
+
+standard表示两个mask一摸一样时，这个evaluation的结果；剩下的各个sample表示我使用self label出的mask和PISA benchmark提供的标准mask之间的evaluation结果
