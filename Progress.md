@@ -281,3 +281,11 @@ to:
         with torch.inference_mode(), torch.autocast(device_type='cuda', dtype=torch.float16):
             outputs = pipeline.run_control(ss, image, seed=1)
 ```
+
+## 2026.5.9
+in the PISA experiment, their evaluation code lacks an important part, points, indicating which objects need to be followed. I manually make up this part, and then the evaluation works well. And I write a piece of code that can indicate the position of the object we need to track, which can produce the desired label more efficiently and save the labor.
+
+The model I use is: "IDEA-Research/grounding-dino-base". If you want to use it, run the following command in your terminal.
+```
+python object_point_locator.py
+```
