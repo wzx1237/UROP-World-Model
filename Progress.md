@@ -299,3 +299,11 @@ The following table shows the result:
 | seen 29 | 0.00030  | 3.3823e-05 | 0.96526 |
 
 standard表示两个mask一摸一样时，这个evaluation的结果；剩下的各个sample表示我使用self label出的mask和PISA benchmark提供的标准mask之间的evaluation结果
+
+以下是用manim和pybullet生成的shoe fall (seen 01)的视频和benchmark之间的loss:
+|         | L2 loss | CD      | IoU     |
+| :--     | :--     | :--     | :--     |
+| manim   | 0.19989 | 0.53647 | **0.00**    |
+| pybullet| **0.14223** | **0.35443** | **0.00**    |
+
+加粗意味着表现更好
