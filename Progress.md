@@ -307,3 +307,10 @@ standard表示两个mask一摸一样时，这个evaluation的结果；剩下的�
 | pybullet| **0.14223** | **0.35443** | **0.00**    |
 
 加粗意味着表现更好
+
+## 2026.5.29
+我初步认为可能是我没有进行training导致的效果不好；他的pre-train model在given demo上面的表现很好. 所以我怀疑可能pre-train model的generalization能力不强导致的。为了验证我的猜想，我要去网上找faucet, furniture这样的图片进行试验.
+
+我的猜想是正确的，随便从google上档下来的水龙头图片可以生成质量很高的mesh (具体效果请看demo/in-distribution/tap_0529)
+
+也就是说，我们的下一步是training!
