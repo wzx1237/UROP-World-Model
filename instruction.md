@@ -39,3 +39,8 @@ base
 2. PhysX-Anything的virtual environment和MoReGen是不同的，它们的environment分别叫做: physx-anything和MoReGen
 3. 我不会在GitHub的repo里面进行调试。你只需要把需要的代码写道repo里面就行。(repo里面不会有MoReGen和physx的代码，你写不用把它们pull下来。我想在放进repo前先在我的虚拟机上调试好再说)
 4. 虚拟机的环境是Linux. 在开新的terminal之前记得先激活bash，因为我没有调整tcsh的config file, 导致在tcsh里面没有conda
+5. MoReGen的运行应该有三步：
+    1. start the qwen coder agent: python qwen_coder_agent/run_coder.py
+    2. start the VLM agent: python vlm_agent.py
+    3. run manim agent: python manim_agent.py
+  值得注意的是：你不用理会什么mesh的location或者text prompt, 这些我都已经处理好了，你无需担心。至于MoReGen的输出结果会存在目录/homes/zwanglg/wzxhome/MoReGen/result/f"{yyyymmdd-hhmmss}"/frames_0001 里面 (例：/homes/zwanglg/wzxhome/MoReGen/result/20260411-193359/frames_0001)

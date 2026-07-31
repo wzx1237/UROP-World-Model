@@ -121,6 +121,7 @@ def main() -> int:
     moregen_dir = (args.moregen_dir or (repo_root / "MoReGen")).resolve()
     prompts_file = (args.prompts_file or (moregen_dir / "prompts.txt")).resolve()
     physx_basepath = (args.physx_basepath or (physx_dir / "test_demo")).resolve()
+    physx_demo_dir = (physx_dir / "demo").resolve()
     moregen_output_frames_dir = (args.moregen_output_frames_dir or (moregen_dir / "output_frames")).resolve()
 
     inputs_dir.mkdir(parents=True, exist_ok=True)
@@ -133,12 +134,15 @@ def main() -> int:
     if not prompts_file.exists():
         raise FileNotFoundError(f"Prompts file not found: {prompts_file}")
 
+    copied_inputs = copy_files(png_files, physx_demo_dir)
+    print(f"[OK] Copied {len(copied_inputs)} input image(s) to: {physx_demo_dir}")
+
     started_at = time.time()
 
     if not args.skip_physx:
         physx_commands = [
             (
-                "python 1_vlm_demo.py --demo_path {inputs_dir} "
+                "python 1_vlm_demo.py --demo_path {physx_demo_dir} "
                 "--save_part_ply True --remove_bg False --ckpt {physx_ckpt}"
             ),
             "python 2_decoder.py",
@@ -149,6 +153,7 @@ def main() -> int:
             rendered = render_template(
                 command,
                 inputs_dir=str(inputs_dir),
+                physx_demo_dir=str(physx_demo_dir),
                 physx_ckpt=str((physx_dir / "pretrain" / "vlm").resolve()),
                 physx_basepath=str(physx_basepath),
             )
