@@ -1,6 +1,6 @@
 我现在要搭建一个pipeline, 实现Picture (text) 2 Vedio的生成 (input: picture and text; output: vedio, mp4格式)。我们的计划是：
 1. 输入的图片为png格式，已经去除背景，放在一个叫做inputs的folder中。
-2.使用PhysX-Anything的mesh generate功能生成一个可用的urdf格式的mesh, 生成好的mesh放在一个叫meshes的folder中。
+2. 使用PhysX-Anything的mesh generate功能生成一个可用的urdf格式的mesh, 生成好的mesh放在一个叫meshes的folder中。
 3. MoReGen使用生成好的mesh来生成视频，结果就放在一个叫results的folder中. 
 
 file structure:

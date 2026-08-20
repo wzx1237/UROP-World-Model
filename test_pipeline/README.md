@@ -29,11 +29,13 @@
 
 ## 默认 MoReGen 阶段
 
-脚本会在 `MoReGen` 环境中执行默认命令：
+脚本会在 `MoReGen` 环境中执行命令：
 
-`python demo.py --mesh_dir <meshes_dir> --prompt_file <prompts_file> --output_frames_dir <MoReGen/output_frames>`
+1. `python qwen_coder_agent/run_coder.py`
+2. `python vlm_agent.py`
+3. `python manim_agent.py`
 
-如果你的 MoReGen 命令不同，可用 `--moregen-command` 覆盖（支持重复传入多条命令）。
+并且值得注意的是，这三条命令需要同时执行
 
 ## 运行示例（Linux/bash）
 

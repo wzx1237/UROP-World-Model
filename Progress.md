@@ -314,3 +314,9 @@ standard表示两个mask一摸一样时，这个evaluation的结果；剩下的�
 我的猜想是正确的，随便从google上档下来的水龙头图片可以生成质量很高的mesh (具体效果请看demo/in-distribution/tap_0529)
 
 也就是说，我们的下一步是training!
+
+
+## 2026.8.20
+build up the pipeline:
+1. fix problem: move generated meshes to folder: 'meshes'
+2. fix problem: run program 'run_coder.py', 'vlm_agent.py' and 'manim_agent.py' at the same time.
