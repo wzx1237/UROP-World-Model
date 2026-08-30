@@ -320,3 +320,22 @@ standard表示两个mask一摸一样时，这个evaluation的结果；剩下的�
 build up the pipeline:
 1. fix problem: move generated meshes to folder: 'meshes'
 2. fix problem: run program 'run_coder.py', 'vlm_agent.py' and 'manim_agent.py' at the same time.
+3. fix problem: ```manim_agent.py``` run before ```run_coder.py``` and ```vlm_agent.py```
+
+## 2026.8.29
+我更新了一下MoReGen的prompt, 使得agent可以使用PhysX生成的mesh来进行3D的复现
+
+Updated prompt:
+```python
+messages=[
+            {"role": "system", "content": f"You are a helpful code assistant that generates and fixes python code to create physics simulations and animations using the {client}. \
+            By generating code, you help users create physics-accurate video simulations from text prompt that follows real-world physics concepts and phenomena. \
+            You must ensure that the code you generate strictly adheres to the {client_dict[client]}'s syntax and capabilities. \
+            Also, try to use mesh to represent object (mesh available in: /homes/zwanglg/wzxhome/meshes/basic.urdf). \
+            If client is pybullet: use headless DIRECT mode, render frames at 420x270, save JPEG frames into the directory specified by the environment variable OUTPUT_FRAMES_DIR (create it if needed) using filenames frame_00000.jpg, frame_00001.jpg, ... and print exactly 'Frames ready at: <OUTPUT_FRAMES_DIR>' at the end. \
+            If client is not pybullet: do not try to save the video, just make the window show the animation."},
+            {"role": "user", "content": prompt}
+        ]
+```
+
+Instruction for use:

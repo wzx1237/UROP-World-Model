@@ -71,7 +71,7 @@ def maybe_convert_frames_to_mp4(frames_dir: Path, output_path: Path, fps: int, d
     output_path.parent.mkdir(parents=True, exist_ok=True)
     ffmpeg_cmd = (
         f'ffmpeg -y -framerate {fps} -pattern_type glob -i "{frame_glob}" '
-        f'-c:v libx264 -pix_fmt yuv420p "{output_path}"'
+        f'-c:v mpeg4 -pix_fmt yuv420p "{output_path}"'
     )
     run_in_conda(ffmpeg_cmd, cwd=frames_dir, conda_env=None, dry_run=dry_run)
     return True
@@ -158,7 +158,6 @@ def main() -> int:
                 physx_basepath=str(physx_basepath),
             )
             run_in_conda(rendered, cwd=physx_dir, conda_env=args.physx_env, dry_run=args.dry_run)
-
     mesh_files = list_files(physx_basepath, [".urdf"])
     if not mesh_files:
         raise FileNotFoundError(f"No URDF meshes found in: {physx_basepath}")
@@ -169,22 +168,47 @@ def main() -> int:
         moregen_commands = list(args.moregen_command)
         if not moregen_commands:
             moregen_commands = [
-                (
-                    "python demo.py --mesh_dir {meshes_dir} --prompt_file {prompts_file} "
-                    "--output_frames_dir {moregen_output_frames_dir}"
-                )
+                "python qwen_coder_agent/run_coder.py",
+                "python vlm_agent.py",
+                "python manim_agent.py",
             ]
-        for command in moregen_commands:
-            rendered = render_template(
-                command,
-                moregen_dir=str(moregen_dir),
-                meshes_dir=str(meshes_dir),
-                results_dir=str(results_dir),
-                prompts_file=str(prompts_file),
-                inputs_dir=str(inputs_dir),
-                moregen_output_frames_dir=str(moregen_output_frames_dir),
-            )
-            run_in_conda(rendered, cwd=moregen_dir, conda_env=args.moregen_env, dry_run=args.dry_run)
+        # run all MoReGen commands at the same time
+        background_procs = []
+        if args.dry_run:
+            for command in moregen_commands:
+                rendered = render_template(
+                    command,
+                    moregen_dir=str(moregen_dir),
+                    meshes_dir=str(meshes_dir),
+                    results_dir=str(results_dir),
+                    prompts_file=str(prompts_file),
+                    inputs_dir=str(inputs_dir),
+                    moregen_output_frames_dir=str(moregen_output_frames_dir),
+                )
+                print(f"[DRY-RUN] would start background: {rendered}")
+        else:
+            for command in moregen_commands:
+                rendered = render_template(
+                    command,
+                    moregen_dir=str(moregen_dir),
+                    meshes_dir=str(meshes_dir),
+                    results_dir=str(results_dir),
+                    prompts_file=str(prompts_file),
+                    inputs_dir=str(inputs_dir),
+                    moregen_output_frames_dir=str(moregen_output_frames_dir),
+                )
+                wrapped = (
+                    'source "$(conda info --base)/etc/profile.d/conda.sh" && '
+                    f"conda activate {shlex.quote(args.moregen_env)} && {rendered}"
+                )
+                print(f"[RUN-ASYNC] cwd={moregen_dir} env={args.moregen_env} cmd={rendered}")
+                p = subprocess.Popen(["bash", "-lc", wrapped], cwd=str(moregen_dir))
+                background_procs.append(p)
+
+            for p in background_procs:
+                rc = p.wait()
+                if rc != 0:
+                    raise subprocess.CalledProcessError(rc, p.args)
 
     candidate_videos = [
         p for p in list_files(moregen_dir, VIDEO_EXTENSIONS) if p.stat().st_mtime >= started_at
